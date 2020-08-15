@@ -1,17 +1,18 @@
 package Games.BasketBall
 import Games.BasketBall.BasketBallPoint.{OnePointer, ThreePointer, TwoPointer}
 import Games.BasketBall.BasketballTeam.{Team1, Team2}
-import Games.BasketBall.FormatSpecification.EventFormatSpecification
-import Games.BasketBall.FormatSpecification.EventFormatSpecification.Offset
-import eu.timepit.refined.types.numeric.NonNegInt
+import Games.BasketBall.EventFormat.EventFormatSpecification
+import Games.BasketBall.EventFormat.EventFormatSpecification.Offset
+import Games.Events.{EventParser, GameEvent, GameEventError}
 import cats.implicits._
+import eu.timepit.refined.types.numeric.NonNegInt
 
 import scala.util.Try
 
 class BasketBallEventParser(eventFormat: EventFormatSpecification) extends EventParser {
   import BasketBallEventParser._
 
-  override def parseEvent(event: String): Either[GameEventError, GameEvent] = {
+  override def parseEvent(event: String): Either[GameEventError, GameEvent] =
     for {
       bitVector  <- convertToBinaryList(event)
       score      <- decodeScore(decodeSegment(bitVector, eventFormat.MatchScore))
@@ -20,24 +21,23 @@ class BasketBallEventParser(eventFormat: EventFormatSpecification) extends Event
       team2Score <- decodeTeamScore(decodeSegment(bitVector, eventFormat.Team2Score))
       matchTime  <- decodeGameTime(decodeSegment(bitVector, eventFormat.MatchTime))
     } yield TeamScored(score, teamScored, GameState(team1score, team2Score, matchTime))
-  }
 
-  private def convertToBinaryList(event: String): Either[LineParseError, List[Char]] = {
+  private def convertToBinaryList(event: String): Either[InvalidEventString, List[Char]] =
     Try {
       Integer
         .decode(event)
         .toInt
         .toBinaryString
         .reverse
-        .padTo(eventFormat.bitLength, 0)
+        .padTo(eventFormat.BitLength, 0)
         .mkString
         .toList
-    }.toEither.leftMap(error => LineParseError(error))
-  }
+    }.toEither
+      .leftMap(_ => InvalidEventString(s"Could not parse input event: ${event}"))
 }
 object BasketBallEventParser {
-  final case class LineParseError(exception: Throwable) extends GameEventError
-  final case class GameScoreParseError(message: String) extends GameEventError
+  final case class InvalidEventString(msg: String) extends GameEventError
+  final case class InvalidScore(message: String) extends GameEventError
   final case class TeamScoreParseError(message: String, error: String) extends GameEventError
   final case class GameTimeParseError(message: String, error: String) extends GameEventError
 
@@ -46,27 +46,23 @@ object BasketBallEventParser {
     Integer.valueOf(segmentString, 2)
   }
 
-  private def decodeTeamScore(teamScore: Int): Either[TeamScoreParseError, NonNegInt] = {
+  private def decodeTeamScore(teamScore: Int): Either[TeamScoreParseError, NonNegInt] =
     NonNegInt.from(teamScore).leftMap(error => TeamScoreParseError("Team Scores must be Non-Negative", error))
-  }
 
-  private def decodeGameTime(gameTime: Int): Either[GameTimeParseError, NonNegInt] = {
-    NonNegInt.from(gameTime).leftMap(error => GameTimeParseError("Games.BasketBall.Game time must be Non-Negative", error))
-  }
+  private def decodeGameTime(gameTime: Int): Either[GameTimeParseError, NonNegInt] =
+    NonNegInt.from(gameTime).leftMap(error => GameTimeParseError(" time must be Non-Negative", error))
 
-  private def decodeScore(pointScore: Int): Either[GameScoreParseError, BasketBallPoint] = {
+  private def decodeScore(pointScore: Int): Either[InvalidScore, BasketBallPoint] =
     pointScore match {
       case 1 => Right(OnePointer)
       case 2 => Right(TwoPointer)
       case 3 => Right(ThreePointer)
-      case _ => Left(GameScoreParseError(s"Decoded points scored: ${pointScore} is not valid"))
+      case _ => Left(InvalidScore(s"Decoded points scored: ${pointScore} is not valid"))
     }
-  }
 
-  private def decodeScoringTeam(scoringBit: Int): Either[GameEventError, BasketballTeam] = {
+  private def decodeScoringTeam(scoringBit: Int): Either[GameEventError, BasketballTeam] =
     Right(scoringBit match {
       case 0 => Team1
       case 1 => Team2
     })
-  }
 }

@@ -1,6 +1,5 @@
-package Games.BasketBall
-
-import Games.BasketBall.Identity.Id
+package Games.Events
+import Games.Events.Identity.Id
 
 object Identity {
   type Id[A] = A

@@ -1,5 +1,7 @@
 package Games.BasketBall
 
+import Games.Events.{ EventReader, GameEvent, GameEventError }
+import Games.Game
 import eu.timepit.refined.types.numeric.NonNegInt
 
 sealed trait BasketballTeam
@@ -9,20 +11,20 @@ object BasketballTeam {
   case object Team2 extends BasketballTeam
 }
 
-case class GameState(team1Score: NonNegInt, team2Score: NonNegInt, matchTime: NonNegInt)
+final case class GameState(team1Score: NonNegInt, team2Score: NonNegInt, matchTime: NonNegInt)
 
 sealed trait BasketBallPoint
 
 object BasketBallPoint {
-  case object OnePointer extends BasketBallPoint
-  case object TwoPointer extends BasketBallPoint
+  case object OnePointer   extends BasketBallPoint
+  case object TwoPointer   extends BasketBallPoint
   case object ThreePointer extends BasketBallPoint
 }
 
-case class TeamScored(
-  pointScored: BasketBallPoint,
-  scoringTeam: BasketballTeam,
-  gameState: GameState
+final case class TeamScored(
+    pointScored: BasketBallPoint,
+    scoringTeam: BasketballTeam,
+    gameState: GameState
 ) extends GameEvent
 
 class BasketballGame[F[_]](gameEventSource: EventReader[F]) extends Game[F] {

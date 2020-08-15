@@ -1,4 +1,6 @@
-package Games.BasketBall
+package Games
+
+import Games.Events.{ GameEvent, GameEventError }
 
 trait Game[F[_]] {
   def lastEvent: F[Either[GameEventError, GameEvent]]
