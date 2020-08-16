@@ -1,6 +1,6 @@
-package Games
+package GameStreaming.Games
 
-import Games.Events.{ GameEvent, GameEventError }
+import GameStreaming.Events.{ GameEvent, GameEventError }
 
 trait Game[F[_]] {
   def lastEvent: F[Either[GameEventError, GameEvent]]

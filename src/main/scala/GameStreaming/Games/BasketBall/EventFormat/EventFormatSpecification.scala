@@ -1,5 +1,6 @@
-package Games.BasketBall.EventFormat
-import Games.BasketBall.EventFormat.EventFormatSpecification.Offset
+package GameStreaming.Games.BasketBall.EventFormat
+
+import GameStreaming.Games.BasketBall.EventFormat.EventFormatSpecification.Offset
 
 trait EventFormatSpecification {
   def BitLength: Int
