@@ -1,6 +1,6 @@
 package GameStreaming.Games.BasketBall
 
-import GameStreaming.Events.{ EventParser, GameEvent, GameEventError }
+import GameStreaming.Events.{ EventParser, GameEventError }
 import GameStreaming.Games.BasketBall.BasketBallPoint.{ OnePointer, ThreePointer, TwoPointer }
 import GameStreaming.Games.BasketBall.BasketballTeam.{ Team1, Team2 }
 import GameStreaming.Games.BasketBall.EventFormat.EventFormatSpecification

@@ -11,5 +11,5 @@ trait EventFormatSpecification {
   def MatchTime: Offset
 }
 object EventFormatSpecification {
-  case class Offset(from: Int, to: Int)
+  final case class Offset(from: Int, to: Int)
 }

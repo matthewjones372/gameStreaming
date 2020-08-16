@@ -11,11 +11,10 @@ object BasketballTeam {
 }
 
 final case class GameState(team1Score: NonNegInt, team2Score: NonNegInt, matchTime: NonNegInt) {
-  def isConsistentWith(that: GameState): Boolean = {
-    that.matchTime.value > matchTime.value &&
+  def isConsistentWith(that: GameState): Boolean =
+    matchTime.value > that.matchTime.value &&
     that.team1Score.value >= that.team1Score.value &&
     that.team2Score.value >= that.team2Score.value
-  }
 }
 
 sealed trait BasketBallPoint
@@ -31,9 +30,13 @@ final case class TeamScored(
   scoringTeam: BasketballTeam,
   gameState: GameState
 ) extends GameEvent {
-  def isConsistentWith(that: TeamScored): Boolean = {
-    this.gameState.isConsistentWith(that.gameState)
-  }
+  def isConsistentWith(lastTeamScoredMaybe: Option[TeamScored]): Boolean =
+    lastTeamScoredMaybe.forall { lastTeamScore =>
+      this.gameState.isConsistentWith(lastTeamScore.gameState)
+    }
+
+//  private def scoringTeamScoreAddedConsistently(oldState: GameState): Boolean =
+//    ???
 }
 object TeamScored {
   case class NonConsistentState(msg: String) extends GameEventError

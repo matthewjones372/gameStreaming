@@ -1,12 +1,12 @@
 package GameStreaming.Utils
 import GameStreaming.Games.BasketBall.EventFormat.EventFormatV1
-import GameStreaming.Games.BasketBall.{BasketBallEventParser, BasketBallPoint, BasketballTeam, GameState, TeamScored}
+import GameStreaming.Games.BasketBall.{ BasketBallEventParser, BasketBallPoint, BasketballTeam, GameState, TeamScored }
 import eu.timepit.refined.types.numeric.NonNegInt
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.{Arbitrary, Gen}
+import org.scalacheck.{ Arbitrary, Gen }
 import org.scalacheck.magnolia._
 
-object TeamScoreTesting{
+object TeamScoreTesting {
   val eventParser = new BasketBallEventParser(EventFormatV1)
 
   def expectedGameState(team1Score: Int, team2Score: Int, matchTime: Int): GameState =

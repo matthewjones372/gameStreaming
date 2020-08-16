@@ -20,7 +20,7 @@ libraryDependencies ++= Seq(
   "org.typelevel" %% "cats-core" % catsVersion,
   "com.typesafe.scala-logging" %% "scala-logging" % scalaLoggingVersion,
   "ch.qos.logback" % "logback-classic" % logbackVersion,
-"org.scalatest" %% "scalatest" % scalaTestVersion % Test,
+  "org.scalatest" %% "scalatest" % scalaTestVersion % Test,
   "org.scalacheck" %% "scalacheck" % scalaCheckVersion % Test,
   "com.github.chocpanda" %% "scalacheck-magnolia" % scalaCheckMagnoliaVersion % Test,
   "org.scalatestplus" %% "scalacheck-1-14" % scalaCheckTestPlus % Test
