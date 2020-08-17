@@ -1,33 +1,33 @@
 package GameStreaming.Events
-import java.io.{BufferedReader, FileReader}
 import java.util.concurrent.ConcurrentLinkedDeque
 
+import GameStreaming.Events.HydrationSource.HydrationSource
 import GameStreaming.Games.BasketBall.TeamScored
+import GameStreaming.Games.{GameEvent, GameEventError}
 import com.typesafe.scalalogging.StrictLogging
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.jdk.CollectionConverters._
-import scala.util.Using
 
 trait EventReader[F[_]] {
   case class NonConsistentEvent(msg: String) extends GameEventError
   def add(event: String): F[Either[GameEventError, Boolean]]
+  def hydrateBuffer(): Unit
   def last: F[Option[_ <: GameEvent]]
   def lastN(n: Int): F[Seq[_ <: GameEvent]]
   def all: F[Seq[_ <: GameEvent]]
 }
 
-class FutureEventReader(eventFilePath: String, eventParser: EventParser)(implicit ec: ExecutionContext)
-    extends EventReader[Future]
+class FutureEventReader(hydrationSource: HydrationSource[String], eventParser: EventParser)(
+  implicit
+  ec: ExecutionContext
+) extends EventReader[Future]
     with StrictLogging {
+
   private val eventBuffer = new ConcurrentLinkedDeque[TeamScored]()
 
-  def hydrateBuffer(): Unit =
-    Using.resource(new BufferedReader(new FileReader(eventFilePath))) { reader =>
-      Iterator.continually(reader.readLine()).takeWhile(_ != null).foreach { event =>
-        add(event)
-      }
-    }
+  override def hydrateBuffer(): Unit =
+    hydrationSource.readAll.foreach(event => add(event))
 
   override def last: Future[Option[TeamScored]] =
     Future {
@@ -50,7 +50,7 @@ class FutureEventReader(eventFilePath: String, eventParser: EventParser)(implici
           if (newEvent.isConsistentWith(lastEvent))
             Future(Right(eventBuffer.add(newEvent)))
           else
-            Future(Left(NonConsistentEvent("")))
+            Future(Left(NonConsistentEvent(s"$newEvent is not consistent with $lastEvent")))
         }
     }
 }

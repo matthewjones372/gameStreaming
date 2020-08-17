@@ -1,5 +1,6 @@
 package GameStreaming.Events
 
+import GameStreaming.Events.HydrationSource.{ FileHydrationSource, HydrationSource }
 import GameStreaming.Games.BasketBall.BasketBallPoint.{ OnePointer, ThreePointer, TwoPointer }
 import GameStreaming.Games.BasketBall.BasketballTeam.{ Team1, Team2 }
 import GameStreaming.Games.BasketBall.EventFormat.EventFormatV1
@@ -11,8 +12,9 @@ import org.scalatest.OptionValues
 import org.scalatest.compatible.Assertion
 import org.scalatest.concurrent.Eventually
 import org.scalatest.matchers.should.Matchers
+import org.scalatest.prop.Configuration.minSuccessful
 import org.scalatest.wordspec.AsyncWordSpec
-import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
+import org.scalatestplus.scalacheck.{ ScalaCheckDrivenPropertyChecks => sc }
 
 import scala.concurrent.Future
 
@@ -36,41 +38,47 @@ class FutureEventReaderTest
     }
 
     "return the last n events" in {
-      val expectedEvents = List(
-        TeamScored(TwoPointer, Team2, expectedGameState(21, 28, 499)),
-        TeamScored(TwoPointer, Team1, expectedGameState(23, 28, 533)),
-        TeamScored(OnePointer, Team2, expectedGameState(23, 29, 559)),
-        TeamScored(TwoPointer, Team1, expectedGameState(25, 29, 581)),
-        TeamScored(TwoPointer, Team1, expectedGameState(27, 29, 598))
+      lastNEventsShouldMatch(
+        "/with_multiple_events.txt",
+        5,
+        List(
+          TeamScored(TwoPointer, Team2, expectedGameState(21, 28, 499)),
+          TeamScored(TwoPointer, Team1, expectedGameState(23, 28, 533)),
+          TeamScored(OnePointer, Team2, expectedGameState(23, 29, 559)),
+          TeamScored(TwoPointer, Team1, expectedGameState(25, 29, 581)),
+          TeamScored(TwoPointer, Team1, expectedGameState(27, 29, 598))
+        )
       )
-
-      lastNEventsShouldMatch("/with_multiple_events.txt", 5, expectedEvents)
     }
 
     "does not return inconsistent values" in {
       val eventParser     = new BasketBallEventParser(EventFormatV1)
-      val fileEventReader = new FutureEventReader("/empty_file.txt", eventParser)
+      val fileEventReader = new FutureEventReader(EmptyHydrationSource, eventParser)
 
       val firstEvent                 = "0x29f981a2"
       val secondEventWithLowerScores = "0x781002"
 
+      //Add the first event
       fileEventReader.add(firstEvent).map { _ =>
+        //then the second event
         fileEventReader.add(secondEventWithLowerScores)
       }
 
-      eventually(fileEventReader.all.flatMap { result =>
-        result should have size 1
-        result.head should ===(TeamScored(TwoPointer, Team1, expectedGameState(48, 52, 1343)))
-      })
+      eventually {
+        fileEventReader.all.flatMap { result =>
+          result should have size 1
+          result.head should ===(TeamScored(TwoPointer, Team1, expectedGameState(48, 52, 1343)))
+        }
+      }
     }
 
-    "can add events which are consistent and non consistent events are flagged" in {
+    "can add events which are consistent and non consistent events are flagged" in sc.forAll(minSuccessful(500)) { _ =>
       val eventParser     = new BasketBallEventParser(EventFormatV1)
-      val fileEventReader = new FutureEventReader("/empty_file.txt", eventParser)
+      val fileEventReader = new FutureEventReader(EmptyHydrationSource, eventParser)
 
-      ScalaCheckDrivenPropertyChecks.forAll(teamScoreGen) { newTeamScore: TeamScored =>
-        fileEventReader.last.flatMap { lastTeamScore: Option[TeamScored] =>
-          fileEventReader.add(newTeamScore.toHex) flatMap { eventAdded =>
+      sc.forAll(teamScoreGen) { newTeamScore: TeamScored =>
+        fileEventReader.last.map { lastTeamScore: Option[TeamScored] =>
+          fileEventReader.add(newTeamScore.toHexString) map { eventAdded =>
             if (newTeamScore.isConsistentWith(lastTeamScore))
               eventAdded should ===(Right(true))
             else
@@ -79,17 +87,16 @@ class FutureEventReaderTest
         }
       }
 
-      eventually(fileEventReader.all flatMap { result =>
-        result should have size 10
-      })
+      fileEventReader should ===(fileEventReader)
     }
   }
 
   private val eventParser = new BasketBallEventParser(EventFormatV1)
 
   private def lastShouldMatch(filePath: String, expected: Option[TeamScored]): Future[Assertion] = {
-    val path            = getClass.getResource(filePath).getPath
-    val fileEventReader = new FutureEventReader(path, eventParser)
+    val path                = getClass.getResource(filePath).getPath
+    val fileHydrationSource = new FileHydrationSource(path)
+    val fileEventReader     = new FutureEventReader(fileHydrationSource, eventParser)
     fileEventReader.hydrateBuffer()
     eventually(fileEventReader.last map { event =>
       event should ===(expected)
@@ -97,12 +104,17 @@ class FutureEventReaderTest
   }
 
   private def lastNEventsShouldMatch(filePath: String, n: Int, expected: List[TeamScored]): Future[Assertion] = {
-    val path            = getClass.getResource(filePath).getPath
-    val fileEventReader = new FutureEventReader(path, eventParser)
+    val path                = getClass.getResource(filePath).getPath
+    val fileHydrationSource = new FileHydrationSource(path)
+    val fileEventReader     = new FutureEventReader(fileHydrationSource, eventParser)
     fileEventReader.hydrateBuffer()
     eventually(fileEventReader.lastN(n) map { events =>
       events should have size n
       events should ===(expected)
     })
+  }
+
+  object EmptyHydrationSource extends HydrationSource[String] {
+    override def readAll: List[String] = List.empty[String]
   }
 }

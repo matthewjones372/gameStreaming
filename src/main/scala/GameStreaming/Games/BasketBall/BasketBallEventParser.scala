@@ -1,10 +1,11 @@
 package GameStreaming.Games.BasketBall
 
-import GameStreaming.Events.{ EventParser, GameEventError }
+import GameStreaming.Events.EventParser
 import GameStreaming.Games.BasketBall.BasketBallPoint.{ OnePointer, ThreePointer, TwoPointer }
 import GameStreaming.Games.BasketBall.BasketballTeam.{ Team1, Team2 }
 import GameStreaming.Games.BasketBall.EventFormat.EventFormatSpecification
 import GameStreaming.Games.BasketBall.EventFormat.EventFormatSpecification.Offset
+import GameStreaming.Games.GameEventError
 import cats.implicits._
 import eu.timepit.refined.types.numeric.NonNegInt
 

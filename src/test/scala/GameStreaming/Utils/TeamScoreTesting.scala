@@ -14,9 +14,9 @@ object TeamScoreTesting {
 
   implicit val gameStateGen: Arbitrary[GameState] = Arbitrary(
     for {
-      team1Score <- Gen.choose(0, 128)
-      team2Score <- Gen.choose(0, 128)
-      gameTime   <- Gen.choose(0, 2048)
+      team1Score <- Gen.chooseNum(0, 127)
+      team2Score <- Gen.chooseNum(0, 127)
+      gameTime   <- Gen.chooseNum(0, 2047)
     } yield GameState(
       NonNegInt.unsafeFrom(team1Score),
       NonNegInt.unsafeFrom(team2Score),
@@ -32,7 +32,7 @@ object TeamScoreTesting {
     } yield TeamScored(pointsScore, scoringTeam, gameSate)
 
   implicit class TeamScoredImplicits(teamScored: TeamScored) {
-    def toHex: String = {
+    def toHexString: String = {
       val pointsScored = teamScored.pointScored match {
         case BasketBallPoint.OnePointer   => 1.toBinaryString.reverse.padTo(2, 0).reverse
         case BasketBallPoint.TwoPointer   => 2.toBinaryString.reverse.padTo(2, 0).reverse

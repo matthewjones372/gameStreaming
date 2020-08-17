@@ -8,11 +8,11 @@ import GameStreaming.Utils.TeamScoreTesting._
 import org.scalactic.TypeCheckedTripleEquals
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks._
-import org.scalatest.prop.TableFor3
+import org.scalatest.prop.{ Configuration, TableFor3 }
 import org.scalatest.wordspec.AnyWordSpec
-import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
+import org.scalatestplus.scalacheck.{ ScalaCheckDrivenPropertyChecks => sc }
 
-class BasketBallEventParserTest extends AnyWordSpec with Matchers with TypeCheckedTripleEquals {
+class BasketBallEventParserTest extends AnyWordSpec with Matchers with TypeCheckedTripleEquals with Configuration {
   "BasketBallEventParser" should {
     "parse valid event examples" in {
       val validEventExamples: TableFor3[String, String, TeamScored] = Table(
@@ -52,16 +52,15 @@ class BasketBallEventParserTest extends AnyWordSpec with Matchers with TypeCheck
       }
     }
 
-    "parse valid events with values in the minimum and maximum range" in {
-      ScalaCheckDrivenPropertyChecks.forAll(teamScoreGen) { event =>
+    "parse valid events with values in the minimum and maximum range" in sc.forAll(minSuccessful(500)) { _ =>
+      sc.forAll(teamScoreGen) { event =>
         withClue("Could not parse event with valid values") {
-          eventParser.parseEvent(event.toHex) should ===(Right(event))
+          eventParser.parseEvent(event.toHexString) should ===(Right(event))
         }
       }
     }
 
     "return an InvalidEventString error when given an invalid event string" in {
-      eventParser.parseEvent("") should ===(Left(InvalidEventString("Could not parse input event: ")))
       eventParser.parseEvent("SOME_INVALID_STRING") should ===(
         Left(InvalidEventString("Could not parse input event: SOME_INVALID_STRING"))
       )
