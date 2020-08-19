@@ -1,6 +1,5 @@
 package GameStreaming.Games.BasketBall
 
-import GameStreaming.Games.{ GameEvent, GameEventError }
 import eu.timepit.refined.types.numeric.NonNegInt
 
 sealed trait BasketballTeam
@@ -25,20 +24,20 @@ object BasketBallPoint {
   case object ThreePointer extends BasketBallPoint
 }
 
-final case class TeamScored(
-    pointScored: BasketBallPoint,
-    scoringTeam: BasketballTeam,
-    gameState: GameState
-) extends GameEvent {
-  def isConsistentWith(lastTeamScoredMaybe: Option[TeamScored]): Boolean =
-    lastTeamScoredMaybe.forall { lastTeamScore =>
-      this.gameState.isConsistentWith(lastTeamScore.gameState)
-    }
-
-//  private def isScoreConsistent(oldState: GameState): Boolean =
-//    ???
+sealed trait BasketballEvent {
+  def gameState: GameState
+  def isConsistentWith(lastEvent: Option[BasketballEvent]): Boolean
 }
 
-object TeamScored {
-  case class NonConsistentState(msg: String) extends GameEventError
+object BasketballEvent {
+  case class TeamScored(
+      pointScored: BasketBallPoint,
+      scoringTeam: BasketballTeam,
+      gameState: GameState
+  ) extends BasketballEvent {
+    def isConsistentWith(lastTeamScoredMaybe: Option[BasketballEvent]): Boolean =
+      lastTeamScoredMaybe.forall { lastTeamScore =>
+        this.gameState.isConsistentWith(lastTeamScore.gameState)
+      }
+  }
 }

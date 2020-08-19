@@ -1,10 +1,11 @@
 package GameStreaming.Utils
+import GameStreaming.Games.BasketBall.BasketballEvent.TeamScored
 import GameStreaming.Games.BasketBall.EventFormat.EventFormatV1
-import GameStreaming.Games.BasketBall.{ BasketBallEventParser, BasketBallPoint, BasketballTeam, GameState, TeamScored }
+import GameStreaming.Games.BasketBall.{BasketBallEventParser, BasketBallPoint, BasketballTeam, GameState}
 import eu.timepit.refined.types.numeric.NonNegInt
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.{ Arbitrary, Gen }
 import org.scalacheck.magnolia._
+import org.scalacheck.{Arbitrary, Gen}
 
 object TeamScoreTesting {
   val eventParser = new BasketBallEventParser(EventFormatV1)
@@ -47,7 +48,7 @@ object TeamScoreTesting {
       val team1Score = teamScored.gameState.team1Score.value.toBinaryString.reverse.padTo(8, 0).reverse
       val team2Score = teamScored.gameState.team2Score.value.toBinaryString.reverse.padTo(8, 0).reverse
 
-      val gameTime     = teamScored.gameState.matchTime.value.toBinaryString.reverse.padTo(12, 0).reverse
+      val gameTime = teamScored.gameState.matchTime.value.toBinaryString.reverse.padTo(12, 0).reverse
       val binaryString = Vector(Vector(0), gameTime, team1Score, team2Score, scoringTeam, pointsScored).flatten
 
       s"0x${Integer.toString(Integer.parseInt(binaryString.mkString, 2), 16)}"

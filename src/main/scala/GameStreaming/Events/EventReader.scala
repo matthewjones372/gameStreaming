@@ -1,56 +1,57 @@
 package GameStreaming.Events
-import java.util.concurrent.ConcurrentLinkedDeque
-
 import GameStreaming.Events.HydrationSource.HydrationSource
-import GameStreaming.Games.BasketBall.TeamScored
-import GameStreaming.Games.{GameEvent, GameEventError}
+import GameStreaming.Events.Identity.Id
+import GameStreaming.Games.BasketBall.BasketballEvent
+import GameStreaming.Games.BasketBall.BasketballEvent.TeamScored
 import com.typesafe.scalalogging.StrictLogging
 
-import scala.concurrent.{ExecutionContext, Future}
-import scala.jdk.CollectionConverters._
+import scala.collection.mutable
 
-trait EventReader[F[_]] {
-  case class NonConsistentEvent(msg: String) extends GameEventError
-  def add(event: String): F[Either[GameEventError, Boolean]]
-  def hydrateBuffer(): Unit
-  def last: F[Option[_ <: GameEvent]]
-  def lastN(n: Int): F[Seq[_ <: GameEvent]]
-  def all: F[Seq[_ <: GameEvent]]
+object Identity {
+  type Id[A] = A
 }
 
-class FutureEventReader(hydrationSource: HydrationSource[String], eventParser: EventParser)(
-  implicit
-  ec: ExecutionContext
-) extends EventReader[Future]
-    with StrictLogging {
+trait EventReader[F[_]] {
+  case class NonConsistentEvent(msg: String) extends BaskBallEventError
 
-  private val eventBuffer = new ConcurrentLinkedDeque[TeamScored]()
+  def add(event: String): F[Either[BaskBallEventError, Boolean]]
+  def hydrateBuffer(): F[Unit]
+  def last: F[Option[BasketballEvent]]
+  def lastN(n: Int): F[Seq[BasketballEvent]]
+  def all: F[Seq[BasketballEvent]]
+}
+
+class IdEventReader(hydrationSource: HydrationSource[String], eventParser: EventParser) extends EventReader[Id] with StrictLogging {
+
+  private val eventBuffer = new mutable.ListBuffer[BasketballEvent]()
 
   override def hydrateBuffer(): Unit =
     hydrationSource.readAll.foreach(event => add(event))
 
-  override def last: Future[Option[TeamScored]] =
-    Future {
-      if (eventBuffer.isEmpty) None
-      else Some(eventBuffer.getLast)
-    }
+  override def last: Option[BasketballEvent] =
+    eventBuffer.lastOption
 
-  override def lastN(n: Int): Future[List[TeamScored]] =
-    Future(eventBuffer.asScala.takeRight(n).toList)
+  override def lastN(n: Int): List[BasketballEvent] =
+    eventBuffer.takeRight(n).toList
 
-  override def all: Future[List[TeamScored]] =
-    Future(eventBuffer.asScala.toList)
+  override def all: List[BasketballEvent] =
+    eventBuffer.toList
 
-  override def add(event: String): Future[Either[GameEventError, Boolean]] =
+  override def add(event: String): Either[BaskBallEventError, Boolean] =
     eventParser.parseEvent(event) match {
-      case Left(error) =>
-        Future(Left(error))
+      case Left(error: BaskBallEventError) =>
+        logger.error(s"Error adding event: $event returned an error ${error.msg}")
+        Left(error)
       case Right(newEvent: TeamScored) =>
-        last.flatMap { lastEvent =>
-          if (newEvent.isConsistentWith(lastEvent))
-            Future(Right(eventBuffer.add(newEvent)))
-          else
-            Future(Left(NonConsistentEvent(s"$newEvent is not consistent with $lastEvent")))
+        val lastEvent = this.last
+        if (newEvent.isConsistentWith(lastEvent)) {
+          eventBuffer.addOne(newEvent)
+          logger.info(s"Event: $event added to Event Buffer")
+          Right(true) // This should be more robust
+        } else {
+          val error = NonConsistentEvent(s"$newEvent is state is not consistent with last event ${lastEvent.get} and will be discarded")
+          logger.error(error.msg)
+          Left(error)
         }
     }
 }

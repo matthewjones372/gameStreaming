@@ -1,16 +1,16 @@
 package GameStreaming.Events
 
-import GameStreaming.Games.BasketBall.BasketBallEventParser.{ InvalidEventString, InvalidScore }
+import GameStreaming.Games.BasketBall.BasketBallEventParser.{InvalidEventString, InvalidScore}
 import GameStreaming.Games.BasketBall.BasketBallPoint._
+import GameStreaming.Games.BasketBall.BasketballEvent.TeamScored
 import GameStreaming.Games.BasketBall.BasketballTeam._
-import GameStreaming.Games.BasketBall.TeamScored
 import GameStreaming.Utils.TeamScoreTesting._
 import org.scalactic.TypeCheckedTripleEquals
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks._
-import org.scalatest.prop.{ Configuration, TableFor3 }
+import org.scalatest.prop.{Configuration, TableFor3}
 import org.scalatest.wordspec.AnyWordSpec
-import org.scalatestplus.scalacheck.{ ScalaCheckDrivenPropertyChecks => sc }
+import org.scalatestplus.scalacheck.{ScalaCheckDrivenPropertyChecks => sc}
 
 class BasketBallEventParserTest extends AnyWordSpec with Matchers with TypeCheckedTripleEquals with Configuration {
   "BasketBallEventParser" should {
@@ -60,15 +60,14 @@ class BasketBallEventParserTest extends AnyWordSpec with Matchers with TypeCheck
       }
     }
 
-    "return an InvalidEventString error when given an invalid event string" in {
+    "return an InvalidEventString error when given an invalid string" in {
       eventParser.parseEvent("SOME_INVALID_STRING") should ===(
         Left(InvalidEventString("Could not parse input event: SOME_INVALID_STRING"))
       )
     }
 
     "return an GameScoreParseError when given an invalid score event" in {
-      //An invalid event with a score of 0
-      val invalidEvent = "0x781000"
+      val invalidEvent = "0x781000" //An invalid event with a score of 0
       eventParser.parseEvent(invalidEvent) should ===(Left(InvalidScore("Decoded points scored: 0 is not possible")))
     }
   }
