@@ -1,12 +1,12 @@
 package GameStreaming.Events
 
-import GameStreaming.Events.HydrationSource.{FileHydrationSource, HydrationSource}
-import GameStreaming.Games.BasketBall.BasketBallEventParser
-import GameStreaming.Games.BasketBall.BasketBallPoint.{OnePointer, ThreePointer, TwoPointer}
-import GameStreaming.Games.BasketBall.BasketballEvent.TeamScored
-import GameStreaming.Games.BasketBall.BasketballTeam.{Team1, Team2}
-import GameStreaming.Games.BasketBall.EventFormat.EventFormatV1
+import GameStreaming.BasketBallPoint.{OnePointer, ThreePointer, TwoPointer}
+import GameStreaming.BasketballEvent.TeamScored
+import GameStreaming.BasketballTeam.{Team1, Team2}
+import GameStreaming.EventFormat.EventFormatV1
+import GameStreaming.HydrationSource.{FileHydrationSource, HydrationSource}
 import GameStreaming.Utils.TeamScoreTesting._
+import GameStreaming.{BasketBallEventParser, IdEventReader}
 import org.scalactic.TypeCheckedTripleEquals
 import org.scalatest.OptionValues
 import org.scalatest.compatible.Assertion

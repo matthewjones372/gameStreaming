@@ -1,4 +1,4 @@
-package GameStreaming.Events.HydrationSource
+package GameStreaming.HydrationSource
 import org.scalactic.TypeCheckedTripleEquals
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec

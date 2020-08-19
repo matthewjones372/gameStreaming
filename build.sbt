@@ -17,7 +17,6 @@ lazy val scalaCheckTestPlus = "3.1.0.0"
 
 libraryDependencies ++= Seq(
   "eu.timepit" %% "refined" % refinedVersion,
-  "org.typelevel" %% "cats-core" % catsVersion,
   "com.typesafe.scala-logging" %% "scala-logging" % scalaLoggingVersion,
   "ch.qos.logback" % "logback-classic" % logbackVersion,
   "org.scalatest" %% "scalatest" % scalaTestVersion % Test,

@@ -1,4 +1,4 @@
-package GameStreaming.Games.BasketBall
+package GameStreaming
 
 import eu.timepit.refined.types.numeric.NonNegInt
 

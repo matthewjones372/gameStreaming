@@ -1,7 +1,7 @@
 package GameStreaming.Utils
-import GameStreaming.Games.BasketBall.BasketballEvent.TeamScored
-import GameStreaming.Games.BasketBall.EventFormat.EventFormatV1
-import GameStreaming.Games.BasketBall.{BasketBallEventParser, BasketBallPoint, BasketballTeam, GameState}
+import GameStreaming.BasketballEvent.TeamScored
+import GameStreaming.EventFormat.EventFormatV1
+import GameStreaming.{BasketBallEventParser, BasketBallPoint, BasketballTeam, GameState}
 import eu.timepit.refined.types.numeric.NonNegInt
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.magnolia._

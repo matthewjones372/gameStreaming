@@ -1,9 +1,9 @@
 package GameStreaming.Events
 
-import GameStreaming.Games.BasketBall.BasketBallEventParser.{InvalidEventString, InvalidScore}
-import GameStreaming.Games.BasketBall.BasketBallPoint._
-import GameStreaming.Games.BasketBall.BasketballEvent.TeamScored
-import GameStreaming.Games.BasketBall.BasketballTeam._
+import GameStreaming.BasketBallEventParser.{InvalidEventString, InvalidScore}
+import GameStreaming.BasketBallPoint._
+import GameStreaming.BasketballEvent.TeamScored
+import GameStreaming.BasketballTeam._
 import GameStreaming.Utils.TeamScoreTesting._
 import org.scalactic.TypeCheckedTripleEquals
 import org.scalatest.matchers.should.Matchers

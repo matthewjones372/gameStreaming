@@ -1,8 +1,8 @@
-package GameStreaming.Events
-import GameStreaming.Events.HydrationSource.HydrationSource
-import GameStreaming.Events.Identity.Id
-import GameStreaming.Games.BasketBall.BasketballEvent
-import GameStreaming.Games.BasketBall.BasketballEvent.TeamScored
+package GameStreaming
+
+import GameStreaming.BasketballEvent.TeamScored
+import GameStreaming.HydrationSource.HydrationSource
+import GameStreaming.Identity.Id
 import com.typesafe.scalalogging.StrictLogging
 
 import scala.collection.mutable
@@ -21,7 +21,9 @@ trait EventReader[F[_]] {
   def all: F[Seq[BasketballEvent]]
 }
 
-class IdEventReader(hydrationSource: HydrationSource[String], eventParser: EventParser) extends EventReader[Id] with StrictLogging {
+class IdEventReader(hydrationSource: HydrationSource[String], eventParser: EventParser)
+    extends EventReader[Id]
+    with StrictLogging {
 
   private val eventBuffer = new mutable.ListBuffer[BasketballEvent]()
 
@@ -49,7 +51,9 @@ class IdEventReader(hydrationSource: HydrationSource[String], eventParser: Event
           logger.info(s"Event: $event added to Event Buffer")
           Right(true) // This should be more robust
         } else {
-          val error = NonConsistentEvent(s"$newEvent is state is not consistent with last event ${lastEvent.get} and will be discarded")
+          val error = NonConsistentEvent(
+            s"$newEvent is state is not consistent with last event ${lastEvent.get} and will be discarded"
+          )
           logger.error(error.msg)
           Left(error)
         }

@@ -1,5 +1,4 @@
-package GameStreaming.Events
-import GameStreaming.Games.BasketBall.BasketballEvent
+package GameStreaming
 
 trait BaskBallEventError {
   def msg: String

@@ -1,15 +1,13 @@
-package GameStreaming.Games.BasketBall
+package GameStreaming
 
-import GameStreaming.Events.{BaskBallEventError, EventParser}
-import GameStreaming.Games.BasketBall.BasketBallPoint.{OnePointer, ThreePointer, TwoPointer}
-import GameStreaming.Games.BasketBall.BasketballEvent.TeamScored
-import GameStreaming.Games.BasketBall.BasketballTeam.{Team1, Team2}
-import GameStreaming.Games.BasketBall.EventFormat.EventFormatSpecification
-import GameStreaming.Games.BasketBall.EventFormat.EventFormatSpecification.Offset
-import cats.implicits._
+import GameStreaming.BasketBallPoint.{OnePointer, ThreePointer, TwoPointer}
+import GameStreaming.BasketballEvent.TeamScored
+import GameStreaming.BasketballTeam.{Team1, Team2}
+import GameStreaming.EventFormat.EventFormatSpecification
+import GameStreaming.EventFormat.EventFormatSpecification.Offset
 import eu.timepit.refined.types.numeric.NonNegInt
 
-import scala.util.Try
+import scala.util.{Failure, Success, Try}
 
 class BasketBallEventParser(eventFormat: EventFormatSpecification) extends EventParser {
   import BasketBallEventParser._
@@ -34,8 +32,11 @@ class BasketBallEventParser(eventFormat: EventFormatSpecification) extends Event
         .padTo(eventFormat.BitLength, 0)
         .mkString
         .toList
-    }.toEither
-      .leftMap(_ => InvalidEventString(s"Could not parse input event: $event"))
+    } match {
+      // This could be done simply with cats leftMap
+      case Success(bits) => Right(bits)
+      case Failure(_)    => Left(InvalidEventString(s"Could not parse input event: $event"))
+    }
 }
 object BasketBallEventParser {
   final case class InvalidEventString(msg: String) extends BaskBallEventError
@@ -49,10 +50,16 @@ object BasketBallEventParser {
   }
 
   private def decodeTeamScore(teamScore: Int): Either[TeamScoreParseError, NonNegInt] =
-    NonNegInt.from(teamScore).leftMap(error => TeamScoreParseError("Team Scores must be Non-Negative"))
+    NonNegInt.from(teamScore) match {
+      case Left(_)      => Left(TeamScoreParseError("Team Scores must be Non-Negative"))
+      case Right(value) => Right(value)
+    }
 
   private def decodeGameTime(gameTime: Int): Either[GameTimeParseError, NonNegInt] =
-    NonNegInt.from(gameTime).leftMap(error => GameTimeParseError("Game Time must be Non-Negative", error))
+    NonNegInt.from(gameTime) match {
+      case Left(error)  => Left(GameTimeParseError("Game Time must be Non-Negative", error))
+      case Right(value) => Right(value)
+    }
 
   private def decodeScore(pointScore: Int): Either[InvalidScore, BasketBallPoint] =
     pointScore match {

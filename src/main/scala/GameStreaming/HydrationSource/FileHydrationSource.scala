@@ -1,5 +1,5 @@
-package GameStreaming.Events.HydrationSource
-import java.io.{ BufferedReader, FileReader }
+package GameStreaming.HydrationSource
+import java.io.{BufferedReader, FileReader}
 
 import scala.util.Using
 

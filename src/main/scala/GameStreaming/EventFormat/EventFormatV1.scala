@@ -1,6 +1,6 @@
-package GameStreaming.Games.BasketBall.EventFormat
+package GameStreaming.EventFormat
 
-import GameStreaming.Games.BasketBall.EventFormat.EventFormatSpecification.Offset
+import GameStreaming.EventFormat.EventFormatSpecification.Offset
 
 object EventFormatV1 extends EventFormatSpecification {
   val BitLength           = 32
