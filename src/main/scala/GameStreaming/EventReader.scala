@@ -12,18 +12,16 @@ object Identity {
 }
 
 trait EventReader[F[_]] {
-  case class NonConsistentEvent(msg: String) extends BaskBallEventError
+  case class NonConsistentEvent(msg: String) extends BasketballEventError
 
-  def add(event: String): F[Either[BaskBallEventError, Boolean]]
+  def add(event: String): F[Either[BasketballEventError, Boolean]]
   def hydrateBuffer(): F[Unit]
   def last: F[Option[BasketballEvent]]
   def lastN(n: Int): F[Seq[BasketballEvent]]
   def all: F[Seq[BasketballEvent]]
 }
 
-class IdEventReader(hydrationSource: HydrationSource[String], eventParser: EventParser)
-    extends EventReader[Id]
-    with StrictLogging {
+class IdEventReader(hydrationSource: HydrationSource[String], eventParser: EventParser) extends EventReader[Id] with StrictLogging {
 
   private val eventBuffer = new mutable.ListBuffer[BasketballEvent]()
 
@@ -39,9 +37,9 @@ class IdEventReader(hydrationSource: HydrationSource[String], eventParser: Event
   override def all: List[BasketballEvent] =
     eventBuffer.toList
 
-  override def add(event: String): Either[BaskBallEventError, Boolean] =
+  override def add(event: String): Either[BasketballEventError, Boolean] =
     eventParser.parseEvent(event) match {
-      case Left(error: BaskBallEventError) =>
+      case Left(error: BasketballEventError) =>
         logger.error(s"Error adding event: $event returned an error ${error.msg}")
         Left(error)
       case Right(newEvent: TeamScored) =>

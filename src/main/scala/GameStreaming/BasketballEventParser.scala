@@ -1,7 +1,7 @@
 package GameStreaming
 
-import GameStreaming.BasketBallPoint.{OnePointer, ThreePointer, TwoPointer}
 import GameStreaming.BasketballEvent.TeamScored
+import GameStreaming.BasketballPoint.{OnePointer, ThreePointer, TwoPointer}
 import GameStreaming.BasketballTeam.{Team1, Team2}
 import GameStreaming.EventFormat.EventFormatSpecification
 import GameStreaming.EventFormat.EventFormatSpecification.Offset
@@ -9,10 +9,10 @@ import eu.timepit.refined.types.numeric.NonNegInt
 
 import scala.util.{Failure, Success, Try}
 
-class BasketBallEventParser(eventFormat: EventFormatSpecification) extends EventParser {
-  import BasketBallEventParser._
+class BasketballEventParser(eventFormat: EventFormatSpecification) extends EventParser {
+  import BasketballEventParser._
 
-  override def parseEvent(event: String): Either[BaskBallEventError, TeamScored] =
+  override def parseEvent(event: String): Either[BasketballEventError, TeamScored] =
     for {
       bitVector  <- convertToBinaryList(event)
       score      <- decodeScore(decodeSegment(bitVector, eventFormat.MatchScore))
@@ -38,11 +38,11 @@ class BasketBallEventParser(eventFormat: EventFormatSpecification) extends Event
       case Failure(_)    => Left(InvalidEventString(s"Could not parse input event: $event"))
     }
 }
-object BasketBallEventParser {
-  final case class InvalidEventString(msg: String) extends BaskBallEventError
-  final case class InvalidScore(msg: String) extends BaskBallEventError
-  final case class TeamScoreParseError(msg: String) extends BaskBallEventError
-  final case class GameTimeParseError(msg: String, error: String) extends BaskBallEventError
+object BasketballEventParser {
+  final case class InvalidEventString(msg: String) extends BasketballEventError
+  final case class InvalidScore(msg: String) extends BasketballEventError
+  final case class TeamScoreParseError(msg: String) extends BasketballEventError
+  final case class GameTimeParseError(msg: String, error: String) extends BasketballEventError
 
   private def decodeSegment(eventVector: Seq[Char], offset: Offset): Int = {
     val segmentString = eventVector.slice(offset.from, offset.to).reverse.mkString
@@ -61,7 +61,7 @@ object BasketBallEventParser {
       case Right(value) => Right(value)
     }
 
-  private def decodeScore(pointScore: Int): Either[InvalidScore, BasketBallPoint] =
+  private def decodeScore(pointScore: Int): Either[InvalidScore, BasketballPoint] =
     pointScore match {
       case 1 => Right(OnePointer)
       case 2 => Right(TwoPointer)
@@ -69,7 +69,7 @@ object BasketBallEventParser {
       case _ => Left(InvalidScore(s"Decoded points scored: $pointScore is not possible"))
     }
 
-  private def decodeScoringTeam(scoringBit: Int): Either[BaskBallEventError, BasketballTeam] =
+  private def decodeScoringTeam(scoringBit: Int): Either[BasketballEventError, BasketballTeam] =
     scoringBit match {
       case 0 => Right(Team1)
       case 1 => Right(Team2)

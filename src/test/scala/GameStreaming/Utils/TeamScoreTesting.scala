@@ -1,14 +1,14 @@
 package GameStreaming.Utils
 import GameStreaming.BasketballEvent.TeamScored
 import GameStreaming.EventFormat.EventFormatV1
-import GameStreaming.{BasketBallEventParser, BasketBallPoint, BasketballTeam, GameState}
+import GameStreaming.{BasketballEventParser, BasketballPoint, BasketballTeam, GameState}
 import eu.timepit.refined.types.numeric.NonNegInt
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.magnolia._
 import org.scalacheck.{Arbitrary, Gen}
 
 object TeamScoreTesting {
-  val eventParser = new BasketBallEventParser(EventFormatV1)
+  val eventParser = new BasketballEventParser(EventFormatV1)
 
   def expectedGameState(team1Score: Int, team2Score: Int, matchTime: Int): GameState =
     GameState(NonNegInt.unsafeFrom(team1Score), NonNegInt.unsafeFrom(team2Score), NonNegInt.unsafeFrom(matchTime))
@@ -27,7 +27,7 @@ object TeamScoreTesting {
 
   implicit val teamScoreGen: Gen[TeamScored] =
     for {
-      pointsScore <- arbitrary[BasketBallPoint]
+      pointsScore <- arbitrary[BasketballPoint]
       scoringTeam <- arbitrary[BasketballTeam]
       gameSate    <- arbitrary[GameState]
     } yield TeamScored(pointsScore, scoringTeam, gameSate)
@@ -35,9 +35,9 @@ object TeamScoreTesting {
   implicit class TeamScoredImplicits(teamScored: TeamScored) {
     def toHexString: String = {
       val pointsScored = teamScored.pointScored match {
-        case BasketBallPoint.OnePointer   => 1.toBinaryString.reverse.padTo(2, 0).reverse
-        case BasketBallPoint.TwoPointer   => 2.toBinaryString.reverse.padTo(2, 0).reverse
-        case BasketBallPoint.ThreePointer => 3.toBinaryString.reverse.padTo(2, 0).reverse
+        case BasketballPoint.OnePointer   => 1.toBinaryString.reverse.padTo(2, 0).reverse
+        case BasketballPoint.TwoPointer   => 2.toBinaryString.reverse.padTo(2, 0).reverse
+        case BasketballPoint.ThreePointer => 3.toBinaryString.reverse.padTo(2, 0).reverse
       }
 
       val scoringTeam = teamScored.scoringTeam match {

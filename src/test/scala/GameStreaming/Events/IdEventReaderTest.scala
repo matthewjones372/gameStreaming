@@ -1,12 +1,12 @@
 package GameStreaming.Events
 
-import GameStreaming.BasketBallPoint.{OnePointer, ThreePointer, TwoPointer}
 import GameStreaming.BasketballEvent.TeamScored
+import GameStreaming.BasketballPoint.{OnePointer, ThreePointer, TwoPointer}
 import GameStreaming.BasketballTeam.{Team1, Team2}
 import GameStreaming.EventFormat.EventFormatV1
 import GameStreaming.HydrationSource.{FileHydrationSource, HydrationSource}
 import GameStreaming.Utils.TeamScoreTesting._
-import GameStreaming.{BasketBallEventParser, IdEventReader}
+import GameStreaming.{BasketballEventParser, IdEventReader}
 import org.scalactic.TypeCheckedTripleEquals
 import org.scalatest.OptionValues
 import org.scalatest.compatible.Assertion
@@ -42,13 +42,12 @@ class IdEventReaderTest extends AnyWordSpec with Matchers with TypeCheckedTriple
     }
 
     "does not return inconsistent values" in {
-      val eventParser = new BasketBallEventParser(EventFormatV1)
+      val eventParser = new BasketballEventParser(EventFormatV1)
       val fileEventReader = new IdEventReader(EmptyHydrationSource, eventParser)
 
       val firstEvent = "0x29f981a2"
       val secondEventWithLowerScores = "0x781002"
 
-      //Add the first event
       fileEventReader.add(firstEvent)
       fileEventReader.add(secondEventWithLowerScores)
 
@@ -57,7 +56,7 @@ class IdEventReaderTest extends AnyWordSpec with Matchers with TypeCheckedTriple
     }
   }
 
-  private val eventParser = new BasketBallEventParser(EventFormatV1)
+  private val eventParser = new BasketballEventParser(EventFormatV1)
 
   private def lastShouldMatch(filePath: String, expected: Option[TeamScored]): Assertion = {
     val path = getClass.getResource(filePath).getPath

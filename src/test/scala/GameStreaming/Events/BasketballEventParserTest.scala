@@ -1,8 +1,8 @@
 package GameStreaming.Events
 
-import GameStreaming.BasketBallEventParser.{InvalidEventString, InvalidScore}
-import GameStreaming.BasketBallPoint._
 import GameStreaming.BasketballEvent.TeamScored
+import GameStreaming.BasketballEventParser.{InvalidEventString, InvalidScore}
+import GameStreaming.BasketballPoint._
 import GameStreaming.BasketballTeam._
 import GameStreaming.Utils.TeamScoreTesting._
 import org.scalactic.TypeCheckedTripleEquals
@@ -12,8 +12,8 @@ import org.scalatest.prop.{Configuration, TableFor3}
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.scalacheck.{ScalaCheckDrivenPropertyChecks => sc}
 
-class BasketBallEventParserTest extends AnyWordSpec with Matchers with TypeCheckedTripleEquals with Configuration {
-  "BasketBallEventParser" should {
+class BasketballEventParserTest extends AnyWordSpec with Matchers with TypeCheckedTripleEquals with Configuration {
+  "BasketballEventParser" should {
     "parse valid event examples" in {
       val validEventExamples: TableFor3[String, String, TeamScored] = Table(
         ("Scenario", "Event Hex", "Expected Event Decoded"),
