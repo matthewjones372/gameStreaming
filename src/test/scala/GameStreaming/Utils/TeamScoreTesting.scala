@@ -15,9 +15,9 @@ object TeamScoreTesting {
 
   implicit val gameStateGen: Arbitrary[GameState] = Arbitrary(
     for {
-      team1Score <- Gen.chooseNum(0, 127)
-      team2Score <- Gen.chooseNum(0, 127)
-      gameTime   <- Gen.chooseNum(0, 2047)
+      team1Score <- Gen.chooseNum(0, 255)
+      team2Score <- Gen.chooseNum(0, 255)
+      gameTime   <- Gen.chooseNum(0, 4095)
     } yield GameState(
       NonNegInt.unsafeFrom(team1Score),
       NonNegInt.unsafeFrom(team2Score),
