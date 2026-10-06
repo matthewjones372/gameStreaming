@@ -41,6 +41,11 @@ class BasketballEventParserTest extends AnyWordSpec with Matchers with TypeCheck
           "At 38:30 game time, Team 2 scores 3 points",
           "0x48332327",
           TeamScored(ThreePointer, Team2, expectedGameState(100, 100, 2310))
+        ),
+        (
+          "Scores above 127 use the eighth bit of each score field",
+          "0x7d0644b2",
+          TeamScored(TwoPointer, Team1, expectedGameState(200, 150, 4000))
         )
       )
 
