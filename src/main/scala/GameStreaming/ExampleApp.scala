@@ -1,11 +1,10 @@
 package GameStreaming
 import GameStreaming.EventFormat.EventFormatV1
-import GameStreaming.HydrationSource.FileHydrationSource
+import GameStreaming.HydrationSource.ResourceHydrationSource
 
 object AppLoader {
   private lazy val parser               = new BasketballEventParser(EventFormatV1)
-  private lazy val resourcePath: String = getClass.getResource("/example.txt").getPath
-  private lazy val hydrationSource      = new FileHydrationSource(resourcePath)
+  private lazy val hydrationSource      = new ResourceHydrationSource("/example.txt")
   lazy val eventReader                  = new IdEventReader(hydrationSource, parser)
 }
 

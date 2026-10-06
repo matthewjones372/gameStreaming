@@ -11,6 +11,21 @@ Requires [sbt](https://www.scala-sbt.org/).
 sbt test
 ```
 
+## Running the example
+
+```
+sbt "runMain GameStreaming.ExampleApp"
+```
+
+It reads the events in `src/main/resources/example.txt` and prints the ones it kept:
+
+```
+TeamScored(TwoPointer,Team1,GameState(2,0,15))
+TeamScored(TwoPointer,Team2,GameState(2,2,28))
+TeamScored(ThreePointer,Team2,GameState(2,5,60))
+...
+```
+
 ## The event format
 
 Each event is a 32-bit integer, written in hex (for example `0x781002`). Version 1 of the format packs these fields,
