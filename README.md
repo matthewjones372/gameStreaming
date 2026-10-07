@@ -1,7 +1,9 @@
 # Game Streaming
 
 Reads a stream of basketball scoring events encoded as 32-bit integers, decodes them into typed events, and keeps
-only the ones consistent with the game so far. Written in Scala 2.13 in 2020, with a small fix in 2024.
+only the ones consistent with the game so far. Written in Scala 2.13 in 2020. In 2026 two bugs were fixed: team
+scores above 127 decoded wrongly, because the parser read seven of their eight bits, and the example app could not
+find its events when run from a jar.
 
 ## Running the tests
 
@@ -96,3 +98,7 @@ generate events across the whole range of valid values and check that each one p
 - A refined type for the maximum score and the maximum match time.
 - Use the same type class to generate load for a tool such as Gatling.
 - Support games other than basketball.
+
+## License
+
+MIT. See [LICENSE](LICENSE).
