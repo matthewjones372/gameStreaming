@@ -5,12 +5,26 @@
       "properties": {
         "gauntlet": {
           "baseline": {
-            "commit": "b1d818130eebbadd4ea153856bbf9d542b7a33db",
+            "commit": "11a577f65ebb8ac4477b84cf7ec47e15b49e4eb4",
             "gauntletVersion": "0.1.0-rc.12",
             "irHash": "1b640409fe4fc5e4a9065bef94d54fec7f52b6efacee3cad9c923376c5643845"
           },
           "legacy": [],
           "metrics": {
+            "coverage": {
+              "higherIsBetter": true,
+              "perFile": {
+                "src/main/scala/GameStreaming/BasketballEventParser.scala": 95.24,
+                "src/main/scala/GameStreaming/BasketballGame.scala": 100,
+                "src/main/scala/GameStreaming/EventFormat/EventFormatV1.scala": 100,
+                "src/main/scala/GameStreaming/EventReader.scala": 100,
+                "src/main/scala/GameStreaming/ExampleApp.scala": 0,
+                "src/main/scala/GameStreaming/HydrationSource/FileHydrationSource.scala": 100,
+                "src/main/scala/GameStreaming/HydrationSource/ResourceHydrationSource.scala": 100
+              },
+              "unit": "%",
+              "value": 94.64
+            },
             "integrity/assertions-per-test": {
               "higherIsBetter": true,
               "unit": "count",
@@ -40,6 +54,19 @@
               "higherIsBetter": false,
               "unit": "count",
               "value": 0
+            },
+            "mutation": {
+              "higherIsBetter": true,
+              "perFile": {
+                "src/main/scala/GameStreaming/BasketballEventParser.scala": 40,
+                "src/main/scala/GameStreaming/BasketballGame.scala": 91.67,
+                "src/main/scala/GameStreaming/EventReader.scala": 42.86,
+                "src/main/scala/GameStreaming/ExampleApp.scala": 0,
+                "src/main/scala/GameStreaming/HydrationSource/FileHydrationSource.scala": 100,
+                "src/main/scala/GameStreaming/HydrationSource/ResourceHydrationSource.scala": 100
+              },
+              "unit": "%",
+              "value": 70
             }
           },
           "testIds": [
@@ -68,6 +95,22 @@
       "tool": {
         "driver": {
           "name": "gauntlet"
+        }
+      }
+    },
+    {
+      "results": [],
+      "tool": {
+        "driver": {
+          "name": "scala-rules"
+        }
+      }
+    },
+    {
+      "results": [],
+      "tool": {
+        "driver": {
+          "name": "scalafix"
         }
       }
     }
