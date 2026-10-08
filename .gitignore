@@ -2,6 +2,7 @@
 # (may want to keep parts of 'project')
 bin/
 project/
+!project/plugins.sbt
 target/
 build/
 
@@ -30,3 +31,4 @@ build
 
 #general
 *.class
+.claude/settings.local.json

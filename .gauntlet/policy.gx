@@ -1,0 +1,30 @@
+gauntlet "gameStreaming"
+use scala
+mode enforce
+owners @matthewjones372
+
+protect {
+  tests    "src/test/**"
+  fixtures "src/test/resources/**"
+  config   "*.sbt", "project/**", ".scalafix.conf", "stryker4s.conf"
+}
+
+suites {
+  unit "src/test/**"
+}
+
+gates {
+  fast   { build, lint ratchet }
+  verify { unit, coverage >= 80% on changed, mutation ratchet on changed }
+}
+
+on fail mutation { fix "Kill the surviving mutants listed in the report by adding assertions. Do not delete or weaken tests." }
+on fail coverage { fix "Add tests for the uncovered changed lines listed in the report." }
+
+predicate small = diff < 150 lines
+
+review {
+  review when protected changed
+  review when dependency added
+  auto   when small and all gates pass
+}

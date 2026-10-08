@@ -1,0 +1,70 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__gauntlet__check",
+      "mcp__gauntlet__explain",
+      "mcp__gauntlet__get_examples",
+      "mcp__gauntlet__get_grammar",
+      "mcp__gauntlet__validate"
+    ],
+    "deny": [
+      "Edit(*.sbt)",
+      "Edit(.gauntlet/**)",
+      "Edit(.jvmopts)",
+      "Edit(.sbtopts)",
+      "Edit(.scalafix.conf)",
+      "Edit(project/**)",
+      "Edit(src/test/resources/**)",
+      "Edit(stryker4s.conf)",
+      "MultiEdit(*.sbt)",
+      "MultiEdit(.gauntlet/**)",
+      "MultiEdit(.jvmopts)",
+      "MultiEdit(.sbtopts)",
+      "MultiEdit(.scalafix.conf)",
+      "MultiEdit(project/**)",
+      "MultiEdit(src/test/resources/**)",
+      "MultiEdit(stryker4s.conf)",
+      "NotebookEdit(*.sbt)",
+      "NotebookEdit(.gauntlet/**)",
+      "NotebookEdit(.jvmopts)",
+      "NotebookEdit(.sbtopts)",
+      "NotebookEdit(.scalafix.conf)",
+      "NotebookEdit(project/**)",
+      "NotebookEdit(src/test/resources/**)",
+      "NotebookEdit(stryker4s.conf)",
+      "Write(*.sbt)",
+      "Write(.gauntlet/**)",
+      "Write(.jvmopts)",
+      "Write(.sbtopts)",
+      "Write(.scalafix.conf)",
+      "Write(project/**)",
+      "Write(src/test/resources/**)",
+      "Write(stryker4s.conf)"
+    ]
+  },
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "gauntlet hook stop",
+            "statusMessage": "Gauntlet is checking the change (build, tests, coverage)…",
+            "timeout": 1800
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "gauntlet hook pre-tool-use"
+          }
+        ]
+      }
+    ]
+  }
+}
