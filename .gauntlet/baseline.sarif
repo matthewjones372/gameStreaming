@@ -5,7 +5,7 @@
       "properties": {
         "gauntlet": {
           "baseline": {
-            "commit": "d4ce49a46b190e0dc020258374895c46868c23c6",
+            "commit": "d94073541e740e0328e9cb330269861524a637a5",
             "gauntletVersion": "0.1.0-rc.12",
             "irHash": "1b640409fe4fc5e4a9065bef94d54fec7f52b6efacee3cad9c923376c5643845"
           },
