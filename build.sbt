@@ -2,7 +2,7 @@ name := "GamingStream"
 
 version := "0.1"
 
-scalaVersion := "2.13.12"
+scalaVersion := "2.13.16"
 
 lazy val refinedVersion = "0.11.1"
 lazy val catsVersion = "2.0.0"
