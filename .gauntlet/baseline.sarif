@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+  "runs": [
+    {
+      "properties": {
+        "gauntlet": {
+          "baseline": {
+            "commit": "d4ce49a46b190e0dc020258374895c46868c23c6",
+            "gauntletVersion": "0.1.0-rc.12",
+            "irHash": "1b640409fe4fc5e4a9065bef94d54fec7f52b6efacee3cad9c923376c5643845"
+          },
+          "legacy": [],
+          "metrics": {
+            "integrity/assertions-per-test": {
+              "higherIsBetter": true,
+              "unit": "count",
+              "value": 9
+            },
+            "integrity/executed-tests": {
+              "higherIsBetter": true,
+              "unit": "count",
+              "value": 18
+            },
+            "integrity/property-tests": {
+              "higherIsBetter": true,
+              "unit": "count",
+              "value": 2
+            },
+            "integrity/quarantined-tests": {
+              "higherIsBetter": false,
+              "unit": "count",
+              "value": 0
+            },
+            "integrity/skipped-tests": {
+              "higherIsBetter": false,
+              "unit": "count",
+              "value": 0
+            },
+            "integrity/suppressions": {
+              "higherIsBetter": false,
+              "unit": "count",
+              "value": 0
+            }
+          },
+          "testIds": [
+            "GameStreaming.Events.BasketballEventParserTest.BasketballEventParser should parse valid event examples",
+            "GameStreaming.Events.BasketballEventParserTest.BasketballEventParser should parse valid events with values in the minimum and maximum range",
+            "GameStreaming.Events.BasketballEventParserTest.BasketballEventParser should return an GameScoreParseError when given an invalid score event",
+            "GameStreaming.Events.BasketballEventParserTest.BasketballEventParser should return an InvalidEventString error when given an invalid string",
+            "GameStreaming.Events.IdEventReaderTest.IdEventReader should does not return inconsistent values",
+            "GameStreaming.Events.IdEventReaderTest.IdEventReader should return none when there are no events",
+            "GameStreaming.Events.IdEventReaderTest.IdEventReader should return the last n events",
+            "GameStreaming.Events.IdEventReaderTest.IdEventReader should return the last valid event from a file with an invalid event",
+            "GameStreaming.Events.IdEventReaderTest.IdEventReader should return the last valid event from a file with valid events",
+            "GameStreaming.HydrationSource.FileHydrationSourceTest.FileHydrationSource should return a list of strings from a valid line separated file",
+            "GameStreaming.HydrationSource.ResourceHydrationSourceTest.ResourceHydrationSource should fail with the resource name when the resource does not exist",
+            "GameStreaming.HydrationSource.ResourceHydrationSourceTest.ResourceHydrationSource should return a list of strings from a line separated resource",
+            "GameStreaming.TeamScoredTest.TeamScored should flag new event as consistent when team1's  score is increased",
+            "GameStreaming.TeamScoredTest.TeamScored should flag new event as consistent when team2's score is increased",
+            "GameStreaming.TeamScoredTest.TeamScored should flag new event as consistent when the game time is increased",
+            "GameStreaming.TeamScoredTest.TeamScored should flag new event as inconsistent when game time is decreased",
+            "GameStreaming.TeamScoredTest.TeamScored should flag new event as inconsistent when team1's score is decreased",
+            "GameStreaming.TeamScoredTest.TeamScored should flag new event as inconsistent when team2's score is decreased"
+          ]
+        }
+      },
+      "results": [],
+      "tool": {
+        "driver": {
+          "name": "gauntlet"
+        }
+      }
+    }
+  ],
+  "version": "2.1.0"
+}
